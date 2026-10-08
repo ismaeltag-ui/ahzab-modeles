@@ -1,0 +1,29 @@
+ahzab-modeles
+Copyright 2026 Ismael Taghbalout
+
+This repository redistributes, in a converted form, the following work:
+
+  whisper-base-ar-quran
+  Copyright Tarteel AI
+  https://huggingface.co/tarteel-ai/whisper-base-ar-quran
+  (revision 5c3c53fdf9272c4f6ee0bee09a1e5a4a615ee25c)
+  Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+which is itself a fine-tuned version of:
+
+  Whisper (openai/whisper-base)
+  Copyright (c) 2022 OpenAI
+  https://github.com/openai/whisper
+  Licensed under the MIT License (see LICENSE-whisper).
+
+Modifications made in this repository:
+
+  - The PyTorch weights were converted to the ggml format of whisper.cpp
+    with models/convert-h5-to-ggml.py (whisper.cpp v1.9.2), the header
+    field n_text_ctx being taken from max_target_positions (448). The
+    resulting f16 file is byte-identical to the usual community conversion
+    (sha256 aaebca10e2a65a6dda073a6b3ac59900f91887628acf872c565a0198ee850ead).
+  - The f16 file was then quantized to q5_0 with whisper-quantize
+    (whisper.cpp v1.9.2).
+
+No weights were retrained or otherwise altered.
