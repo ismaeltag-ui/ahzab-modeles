@@ -1,7 +1,56 @@
 ahzab-modeles
 Copyright 2026 Ismael Taghbalout
 
-This repository redistributes, in a converted form, the following work:
+This repository redistributes, in modified or converted forms, the following
+works.
+
+-----------------------------------------------------------------------------
+1. fastconformer-quran-ar-juge-int8.onnx  (release fastconformer-quran-ar-juge-v1)
+-----------------------------------------------------------------------------
+
+  fastconformer-quran-ar
+  by mohammed
+  https://huggingface.co/mohammed/fastconformer-quran-ar
+  (revision 60973918b40c5fcdc0e93310c13a4a4661525142,
+   file phase3_full_wer0.0014.nemo, sha256
+   dc3557eea22b25ab5c7af2d8cf01636efd415c4ed417418156e5895056c705d5)
+  Licensed under the Creative Commons Attribution 4.0 International
+  License (CC-BY-4.0, see LICENSE-CC-BY-4.0,
+  https://creativecommons.org/licenses/by/4.0/).
+
+which is itself a fine-tuned version of:
+
+  stt_ar_fastconformer_hybrid_large_pcd_v1.0
+  by NVIDIA
+  https://huggingface.co/nvidia/stt_ar_fastconformer_hybrid_large_pcd_v1.0
+  (revision 7f32349d952f42a28dce979ba73270aa2bbdfa89)
+  Licensed under CC-BY-4.0.
+
+Modifications made in this repository:
+
+  - Only the CTC head of the hybrid model is kept. The encoder and the CTC
+    decoder were exported to ONNX with NeMo 3.0.0 (full-context attention,
+    no cache, opset 17).
+  - The weights of the MatMul operators were quantized to int8 with
+    onnxruntime.quantization.quantize_dynamic (onnxruntime 1.31.0,
+    op_types_to_quantize=["MatMul"], weight_type=QInt8). The other
+    weights stay in float32.
+  - NeMo's audio preprocessor (pre-emphasis 0.97, 512-point Fourier
+    transform with a 400-sample Hann window and a 160-sample hop, 80 mel
+    filters, natural logarithm with a 2^-24 guard, per-feature
+    normalization) was rewritten with standard ONNX operators, the Fourier
+    transform as a convolution, and placed in front of the encoder. It
+    matches NeMo to within 3.1e-5.
+  - An ArgMax over the vocabulary and a Cast to int32 were appended, so
+    that the model outputs one token index per 80 ms frame.
+
+No weights were retrained. The quantization changes the model's outputs
+slightly (about 97 % of the frames keep the same token as the float32
+model).
+
+-----------------------------------------------------------------------------
+2. ggml-tarteel-base-ar-quran-q5_0.bin  (release whisper-base-ar-quran-v1)
+-----------------------------------------------------------------------------
 
   whisper-base-ar-quran
   Copyright Tarteel AI
